@@ -1,0 +1,10 @@
+{  
+    "default.unauthorized": "Unauthorized request.",
+    "default.success": "Successful request.",
+    "default.badRequest": "You didn't give us what we want!",   
+    "default.serverError": "It's not you, it's us. Server Error",
+    "default.helloWorld": "Hello World!",
+
+    "invalid.object.id" : "You need to provide a valid IdObject to continue this operation."       
+
+}

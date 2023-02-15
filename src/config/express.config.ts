@@ -5,6 +5,7 @@ import cors from 'cors';
 import corsOptions from './cors.config';
 
 import appRoute from '../routes/app.route';
+import productRoute from '../routes/product.route';
 
 const app: express.Application = express();
 
@@ -16,5 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
 app.use(appRoute);
+app.use(productRoute);
 
 export { app };

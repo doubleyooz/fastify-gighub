@@ -24,8 +24,7 @@ const create = async (req: Request, res: Response) => {
             });
         })
         .catch(err => {
-            console.log(err);
-            if (err.name === 'MongoError' && err.code === 11000) {
+            if (err.code === 11000) {
                 //next(new Error("There was a duplicate key error"));
                 return res.status(400).json({
                     message: getMessage('product.duplicated.title.user'),
@@ -54,7 +53,6 @@ const findOneById = async (req: Request, res: Response) => {
             });
         })
         .catch(err => {
-            console.log(err);
             return res.status(500).json({
                 message: getMessage('default.serverError'),
                 err: err,
@@ -77,7 +75,6 @@ const find = async (req: Request, res: Response) => {
         ...(price && { price }),
     };
 
-    console.log(search);
     (await Product.find(search).sort('updatedAt')).forEach(doc => {
         docs.push(doc);
     });

@@ -5,5 +5,5 @@ type messageOptions = {
 };
 export const getMessage = (path: string) => {
     const m: messageOptions = { ...messages };
-    return m[path] || undefined;
+    return m[path] || '';
 };

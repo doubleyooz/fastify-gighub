@@ -18,7 +18,7 @@ const ProductSchema: Schema = new Schema<IProduct>(
         wasUsed: { type: Boolean, required: true },
         price: { type: Number, required: true, min: 0 },
         variations: { type: [String] },
-        userId: { type: String, required: true, select: false },
+        userId: { type: String, required: true },
         active: { type: Boolean, default: true },
     },
     { timestamps: true },

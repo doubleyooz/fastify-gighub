@@ -1,11 +1,16 @@
-import 'dotenv/config'
-import mongoose from 'mongoose';
-import { app } from './config/express.config';
+import { app } from './config/fastify.config';
 
-mongoose.connect(`${process.env.DB_CONNECTION}`);
-const server = require('http').Server(app);
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
 
-const PORT: number = parseInt(process.env.PORT as string, 10);
-server.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-});
+const start = async () => {
+    try {
+        console.log({ port: PORT });
+        await app.listen({ port: PORT });
+    } catch (error) {
+        console.log(error);
+        app.log.error(error);
+        process.exit(1);
+    }
+};
+
+start();

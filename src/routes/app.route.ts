@@ -1,10 +1,32 @@
-import { Router, Request, Response } from 'express';
-import { getMessage } from '../utils/message.util';
+import {
+    FastifyInstance,
+    FastifyPluginCallback,
+    FastifyPluginOptions,
+    FastifyReply,
+    FastifyRequest,
+} from 'fastify';
 
-const routes = Router();
+const app: FastifyPluginCallback = (
+    fastify: FastifyInstance,
+    options: FastifyPluginOptions,
+    done: () => void,
+) => {
+    fastify.get(`/`, {
+        schema: {
+            response: {
+                200: {
+                    type: 'object',
+                    properties: {
+                        data: { type: 'string', pattern: '^Hello World!$' },
+                    },
+                },
+            },
+        },
+        handler: (req: FastifyRequest, reply: FastifyReply) => {
+            return reply.send({ data: 'Hello World' });
+        },
+    });
+    done();
+};
 
-routes.get('/', (req: Request, res: Response) => {
-    return res.json({ message: getMessage('default.helloWorld') });
-});
-
-export default routes;
+export default app;

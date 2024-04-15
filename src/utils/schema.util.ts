@@ -70,6 +70,18 @@ export const name = {
     pattern: '^[A-Za-z]+$',
 };
 
+export const searchName = {
+    type: 'string',
+    minLength: 1,
+    maxLength: 15,
+    pattern: '^[A-Za-z]+$',
+};
+
+export const searchString = {
+    type: 'string',
+    minLength: 1,
+};
+
 export const nonNumericTitle = (min: number, maxLength: number) => {
     return {
         type: 'string',

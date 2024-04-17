@@ -14,15 +14,16 @@ const app: FastifyPluginCallback = (
 ) => {
     fastify.post(`/gigs`, {
         schema: GigSchema.store,
+        preHandler: AuthMiddleware.auth,
         handler: GigControllers.store,
     });
-    /*
+
     fastify.get(`/gigs`, {
         schema: GigSchema.find,
         preHandler: AuthMiddleware.auth,
         handler: GigControllers.find,
     });
-
+    /*
     fastify.get(`/gigs/:_id`, {
         schema: GigSchema.findOne,
         preHandler: AuthMiddleware.auth,

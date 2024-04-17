@@ -67,14 +67,14 @@ export const name = {
     type: 'string',
     minLength: 3,
     maxLength: 15,
-    pattern: '^[A-Za-z]+$',
+    pattern: '^[A-Za-z ]+$',
 };
 
 export const searchName = {
     type: 'string',
     minLength: 1,
     maxLength: 15,
-    pattern: '^[A-Za-z]+$',
+    pattern: '^[A-Za-z ]+$',
 };
 
 export const searchString = {
@@ -87,7 +87,7 @@ export const nonNumericTitle = (min: number, maxLength: number) => {
         type: 'string',
         minLength: min,
         maxLength: maxLength,
-        pattern: '^[A-Za-z]+$',
+        pattern: '^[A-Za-z ]+$',
     };
 };
 

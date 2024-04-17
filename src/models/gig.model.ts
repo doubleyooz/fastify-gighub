@@ -5,10 +5,9 @@ export interface IGig extends Document {
     description: string;
     minPrice: number;
     type: string;
+    userId: string;
     preferredTechnologies: string[];
     active?: boolean;
-
-    userId?: string;
 }
 
 export interface LooseIGig {
@@ -16,7 +15,8 @@ export interface LooseIGig {
     description?: string;
     minPrice?: number;
     type?: string;
-    preferredTechnologies: string[];
+    userId?: string;
+    preferredTechnologies?: string[];
     active?: boolean;
 }
 

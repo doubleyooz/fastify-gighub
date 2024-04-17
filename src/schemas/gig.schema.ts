@@ -14,7 +14,6 @@ const minPrice = {
 const gig = {
     title: nonNumericTitle(1, 30),
     description: { type: 'string' },
-    userId: { type: 'string' },
     minPrice,
     type: { type: 'string' },
     preferredTechnologies: { type: 'array', items: { type: 'string' } },
@@ -57,7 +56,19 @@ const findOne = {
 const find = {
     summary: 'returns gigs from the database',
     consumes: ['application/json'],
-    querystring: looseSchema({ title: nonNumericTitle(1, 30) }),
+    querystring: looseSchema({
+        title: nonNumericTitle(1, 30),
+        description: { type: 'string' },
+        type: { type: 'string' },
+        userId: { type: 'string' },
+        preferredTechnologies: {
+            type: 'array',
+            items: {
+                type: 'string',
+            },
+        },
+        active: { type: 'boolean' },
+    }),
     response: {
         200: {
             type: 'object',

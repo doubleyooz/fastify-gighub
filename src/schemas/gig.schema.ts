@@ -38,7 +38,7 @@ const store = {
 const findOne = {
     summary: 'returns a gig from the database',
     consumes: ['application/json'],
-    params: schema({ _id: IsObjectId }),
+    params: schema({ _id: { type: 'string' } }),
     response: {
         200: {
             type: 'object',

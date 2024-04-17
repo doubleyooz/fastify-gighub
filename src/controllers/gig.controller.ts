@@ -75,4 +75,27 @@ const find = async (req: FastifyRequest, reply: FastifyReply) => {
         return reply.code(500).send({ error: err });
     }
 };
-export default { store, find };
+
+const findOne = async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const { _id } = req.params as { _id: string };
+
+        if (!_id) {
+            return reply.code(400).send({ message: '_id is required' });
+        }
+        const search = IsObjectId(_id) ? { _id: _id } : { email: _id };
+
+        const gig = await Gig.findOne(search);
+
+        if (!gig) {
+            return reply.code(404).send({ message: 'Gig not found' });
+        }
+        console.log(gig);
+        return reply.code(200).send({ message: 'Gig retrieved.', data: gig });
+    } catch (err) {
+        console.log(err);
+        return reply.code(500).send({ error: err });
+    }
+};
+
+export default { store, find, findOne };

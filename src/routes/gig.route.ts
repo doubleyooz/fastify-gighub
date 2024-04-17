@@ -6,6 +6,7 @@ import {
 import GigControllers from '../controllers/gig.controller';
 import AuthMiddleware from '../middlewares/auth.middleware';
 import GigSchema from '../schemas/gig.schema';
+import { IsObjectId } from '../utils/schema.util';
 
 const app: FastifyPluginCallback = (
     fastify: FastifyInstance,
@@ -23,13 +24,19 @@ const app: FastifyPluginCallback = (
         preHandler: AuthMiddleware.auth,
         handler: GigControllers.find,
     });
-    /*
+
     fastify.get(`/gigs/:_id`, {
         schema: GigSchema.findOne,
+        preValidation: async (request, reply) => {
+            const { _id } = request.params as { _id: string };
+            if (!IsObjectId(_id)) {
+                reply.code(400).send({ error: 'Invalid ObjectId' });
+            }
+        },
         preHandler: AuthMiddleware.auth,
         handler: GigControllers.findOne,
     });
-
+    /*
     fastify.put(`/gigs`, {
         schema: GigSchema.update,
         preHandler: AuthMiddleware.auth,

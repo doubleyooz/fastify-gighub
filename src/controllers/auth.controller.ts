@@ -21,10 +21,12 @@ const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
         'tokenVersion',
     ]);
 
-    const match = user ? matchPassword(user.password, supposedPassword) : false;
-    console.log(user, match);
+    const match = user
+        ? await matchPassword(user.password, supposedPassword)
+        : false;
+
     if (!match) {
-        reply.code(401).send({
+        return reply.code(401).send({
             message: 'Unauthorized request.',
         });
     }
@@ -42,23 +44,24 @@ const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
 
     req.headers.authorization = `Bearer ${token}`;
 
-    reply.setCookie('jid', refreshToken, {
-        sameSite: 'none',
-        path: '/refresh-token',
-        httpOnly: true,
-        secure: true,
-    });
-
-    reply.setCookie('jid', refreshToken, {
-        sameSite: 'none',
-        path: '/revoke-token',
-        httpOnly: true,
-        secure: true,
-    });
+    reply
+        .setCookie('jid', refreshToken, {
+            sameSite: 'none',
+            path: '/revoke-token',
+            httpOnly: true,
+            secure: true,
+        })
+        .setCookie('jid', refreshToken, {
+            sameSite: 'none',
+            path: '/refresh-token',
+            httpOnly: true,
+            secure: true,
+        });
 
     reply.code(200).send({
         data: {
             _id: user?._id,
+            name: user?.name,
         },
         message: 'Successful login.',
         metadata: {
@@ -102,8 +105,6 @@ const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
     const refreshToken = req.cookies.jid;
 
     if (!refreshToken) {
-        console.log(req.cookies.jid);
-        console.log(req.cookies);
         return reply.code(401).send({
             message: 'Unauthorized request.',
         });

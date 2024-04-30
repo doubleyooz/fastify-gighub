@@ -19,7 +19,7 @@ const app: FastifyPluginCallback = (
 
     fastify.get(`/users`, {
         schema: UserSchema.find,
-        //preHandler: AuthMiddleware.auth,
+        preHandler: AuthMiddleware.auth,
         handler: UserController.find,
     });
 

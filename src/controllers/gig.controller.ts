@@ -98,4 +98,28 @@ const findOne = async (req: FastifyRequest, reply: FastifyReply) => {
     }
 };
 
-export default { store, find, findOne };
+const _delete = async (req: FastifyRequest, reply: FastifyReply) => {
+    const { newToken, auth } = req;
+    const { _id } = req.params as { _id: string };
+
+    if (!_id) {
+        return reply.code(400).send({ message: '_id is required' });
+    }
+
+    try {
+        const result = await Gig.deleteOne({ _id, userId: auth });
+
+        if (result.deletedCount === 0) {
+            reply.code(404).send({ message: 'Not found' });
+        } else {
+            reply.code(200).send({ message: 'Gig deleted' });
+        }
+    } catch (err) {
+        console.log(err);
+        reply.code(500).send({ error: err });
+    }
+
+    return reply;
+};
+
+export default { store, find, findOne, _delete };

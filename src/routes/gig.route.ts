@@ -14,8 +14,8 @@ const app: FastifyPluginCallback = (
     done: () => void,
 ) => {
     fastify.post(`/gigs`, {
+        preValidation: AuthMiddleware.auth,
         schema: GigSchema.store,
-        preHandler: AuthMiddleware.auth,
         handler: GigControllers.store,
     });
 

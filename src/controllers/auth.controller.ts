@@ -150,4 +150,12 @@ const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
     });
 };
 
-export default { refreshAccessToken, revokeRefreshToken, signIn };
+const me = async (req: FastifyRequest, reply: FastifyReply) => {
+    return reply.code(200).send({
+        data: { _id: req.auth },
+
+        message: 'Successful request.',
+    });
+};
+
+export default { refreshAccessToken, revokeRefreshToken, me, signIn };

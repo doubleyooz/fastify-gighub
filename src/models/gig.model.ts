@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, SchemaTypeOptions } from 'mongoose';
 export interface IGig extends Document {
     title: string;
     description: string;
-    minPrice: number;
+    budget: number;
     type: string;
     userId: string;
     preferredTechnologies: string[];
@@ -13,7 +13,7 @@ export interface IGig extends Document {
 export interface LooseIGig {
     title?: string;
     description?: string;
-    minPrice?: number;
+    budget?: number;
     type?: string;
     userId?: string;
     preferredTechnologies?: string[];
@@ -25,7 +25,7 @@ const GigSchema: Schema = new Schema<IGig>(
         title: { type: String, required: true },
         description: { type: String, required: true },
         type: { type: String, required: true },
-        minPrice: { type: Number, required: true, min: 0 },
+        budget: { type: Number, required: true, min: 0 },
         preferredTechnologies: { type: [String] },
         userId: { type: String, required: true },
         active: { type: Boolean, default: true },

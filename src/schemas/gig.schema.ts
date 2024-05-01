@@ -6,7 +6,7 @@ import {
     looseSchema,
 } from '../utils/schema.util';
 
-const minPrice = {
+const budget = {
     type: 'number',
     minimum: 5,
 };
@@ -14,10 +14,17 @@ const minPrice = {
 const gig = {
     title: nonNumericTitle(1, 30),
     description: { type: 'string' },
-    minPrice,
+    budget,
     type: { type: 'string' },
     preferredTechnologies: { type: 'array', items: { type: 'string' } },
     active: { type: 'boolean' },
+};
+
+const metadata = {
+    type: 'object',
+    properties: {
+        token: { type: 'string' },
+    },
 };
 
 const store = {
@@ -30,6 +37,7 @@ const store = {
             properties: {
                 data: { type: 'string' },
                 message: { type: 'string' },
+                metadata,
             },
         },
     },
@@ -81,6 +89,7 @@ const find = {
                         required: ['title', 'description', 'active'],
                     },
                 },
+                metadata,
             },
         },
     },

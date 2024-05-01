@@ -11,7 +11,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             description,
             preferredTechnologies,
             title,
-            minPrice,
+            budget,
             type,
         }: IGig = req.body as IGig;
 
@@ -20,19 +20,29 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             title,
             description,
             active,
-            minPrice,
+            budget,
             userId: req.auth,
             preferredTechnologies,
         });
 
         const result = await newGig.save();
-
+        console.log({
+            metadata: {
+                accessToken: req.newToken,
+            },
+        });
+        const metadata = req.newToken
+            ? {
+                  accessToken: req.newToken,
+              }
+            : undefined;
         return reply.code(201).send({
             data: {
                 title: result.title,
                 description: result.description,
                 _id: result._id,
             },
+            metadata,
             message: 'Gig created!',
         });
     } catch (err: any) {
@@ -65,11 +75,19 @@ const find = async (req: FastifyRequest, reply: FastifyReply) => {
             }),
         };
 
-        const gig = await Gig.find(search);
-
+        const gigsList = await Gig.find(search);
+        const metadata = req.newToken
+            ? {
+                  accessToken: req.newToken,
+              }
+            : undefined;
         return reply
             .code(200)
-            .send({ message: 'Gigs list retrieved.', data: gig });
+            .send({
+                message: 'Gigs list retrieved.',
+                data: gigsList,
+                metadata,
+            });
     } catch (err) {
         console.log(err);
         return reply.code(500).send({ error: err });

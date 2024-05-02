@@ -62,6 +62,7 @@ const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
         data: {
             _id: user?._id,
             name: user?.name,
+            picture: user?.picture,
         },
         message: 'Successful login.',
         metadata: {

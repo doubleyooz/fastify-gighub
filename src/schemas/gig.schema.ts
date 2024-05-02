@@ -15,6 +15,7 @@ const gig = {
     title: nonNumericTitle(1, 30),
     description: { type: 'string' },
     budget,
+    userId: { type: 'string' },
     type: { type: 'string' },
     preferredTechnologies: { type: 'array', items: { type: 'string' } },
     active: { type: 'boolean' },
@@ -86,7 +87,7 @@ const find = {
                     items: {
                         type: 'object',
                         properties: gig,
-                        required: ['title', 'description', 'active'],
+                        required: ['title', 'description', 'active', 'userId'],
                     },
                 },
                 metadata,

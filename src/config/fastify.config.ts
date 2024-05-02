@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import fastifyjwt, { VerifyOptions, FastifyJwtSignOptions } from '@fastify/jwt';
 import fastifyCookie, { FastifyCookieOptions } from '@fastify/cookie';
 import cors from '@fastify/cors';
-
+import multipart from '@fastify/multipart';
 import appRoute from '../routes/app.route';
 
 import gigRoute from '../routes/gig.route';
@@ -45,6 +45,9 @@ app.register(cors, {
     origin: [`${process.env.CLIENT}`, `${process.env.CLIENT2}`],
     credentials: true,
 });
+
+app.register(multipart);
+
 app.register(fastifyCookie, {
     hook: 'onRequest',
     parseOptions: {},

@@ -15,6 +15,12 @@ const signIn = {
                         _id: {
                             type: 'string',
                         },
+                        name: {
+                            type: 'string',
+                        },
+                        profile: {
+                            type: 'string',
+                        },
                     },
                 },
                 metadata: {

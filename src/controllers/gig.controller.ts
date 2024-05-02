@@ -76,18 +76,17 @@ const find = async (req: FastifyRequest, reply: FastifyReply) => {
         };
 
         const gigsList = await Gig.find(search);
+        console.log({ gigsList });
         const metadata = req.newToken
             ? {
                   accessToken: req.newToken,
               }
             : undefined;
-        return reply
-            .code(200)
-            .send({
-                message: 'Gigs list retrieved.',
-                data: gigsList,
-                metadata,
-            });
+        return reply.code(200).send({
+            message: 'Gigs list retrieved.',
+            data: gigsList,
+            metadata,
+        });
     } catch (err) {
         console.log(err);
         return reply.code(500).send({ error: err });

@@ -44,19 +44,18 @@ const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
 
     req.headers.authorization = `Bearer ${token}`;
 
-    reply
-        .setCookie('jid', refreshToken, {
-            sameSite: 'none',
-            path: '/revoke-token',
-            httpOnly: true,
-            secure: true,
-        })
-        .setCookie('jid', refreshToken, {
-            sameSite: 'none',
-            path: '/refresh-token',
-            httpOnly: true,
-            secure: true,
-        });
+    reply.setCookie('jid', refreshToken, {
+        domain: process.env.CLIENT,
+        sameSite: 'none',
+        path: '/revoke-token',
+        httpOnly: true,
+    });
+    reply.setCookie('jid', refreshToken, {
+        domain: process.env.CLIENT,
+        sameSite: 'none',
+        path: '/refresh-token',
+        httpOnly: true,
+    });
 
     reply.code(200).send({
         data: {
@@ -104,7 +103,7 @@ const revokeRefreshToken = async (req: FastifyRequest, reply: FastifyReply) => {
 
 const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
     const refreshToken = req.cookies.jid;
-
+    console.log(req.cookies);
     if (!refreshToken) {
         return reply.code(401).send({
             message: 'Unauthorized request.',

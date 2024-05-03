@@ -6,6 +6,7 @@ import {
 import UserController from '../controllers/user.controller';
 import AuthMiddleware from '../middlewares/auth.middleware';
 import UserSchema from '../schemas/user.schema';
+import UserMiddleware from '../middlewares/user.middleware';
 
 const app: FastifyPluginCallback = (
     fastify: FastifyInstance,
@@ -14,6 +15,7 @@ const app: FastifyPluginCallback = (
 ) => {
     fastify.post(`/users`, {
         schema: UserSchema.store,
+        preHandler: UserMiddleware.trimFields,
         handler: UserController.store,
     });
 

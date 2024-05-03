@@ -1,31 +1,34 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { Types, UpdateQuery } from 'mongoose';
-import Gig, { IGig, LooseIGig } from '../models/gig.model';
+import Proposition, {
+    IProposition,
+    LooseIProposition,
+} from '../models/proposition.model';
 
 import { IsObjectId } from '../utils/schema.util';
 
 const store = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
         const {
-            active,
             description,
-            preferredTechnologies,
-            title,
+            deadline,
             budget,
-            type,
-        }: IGig = req.body as IGig;
+            gigId: gigIdBody,
+        }: IProposition = req.body as IProposition;
 
-        const newGig: IGig = new Gig({
-            type,
-            title,
+        let gigId;
+        if (!gigIdBody) gigId = (req.params as { gigId: string }).gigId;
+        else gigId = gigIdBody;
+        console.log({ gigId });
+        const newProposition: IProposition = new Proposition({
             description,
-            active,
+            gigId,
+            deadline,
             budget,
             user: req.auth,
-            preferredTechnologies,
         });
 
-        const result = await newGig.save();
+        const result = await newProposition.save();
         console.log({
             metadata: {
                 accessToken: req.newToken,
@@ -38,12 +41,13 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             : undefined;
         return reply.code(201).send({
             data: {
-                title: result.title,
                 description: result.description,
+                deadline: result.deadline,
+                budget: result.budget,
                 _id: result._id,
             },
             metadata,
-            message: 'Gig created!',
+            message: 'Proposition created!',
         });
     } catch (err: any) {
         return reply.code(400).send({
@@ -55,35 +59,25 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
 
 const find = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-        const {
-            active,
-            preferredTechnologies,
-            description,
-            title,
-            type,
-            user,
-        } = req.query as LooseIGig;
+        const { gigId, user } = req.query as LooseIProposition;
 
-        const search: LooseIGig = {
-            ...(typeof active === 'boolean' && { active }),
-            ...(preferredTechnologies && { preferredTechnologies }),
-            ...(type && { type }),
+        const search: LooseIProposition = {
             ...(user && { user }),
-            ...(title && { title: { $regex: title, $options: 'i' } as any }),
-            ...(description && {
-                description: { $regex: description, $options: 'i' } as any,
-            }),
+            ...(gigId && { gigId }),
         };
 
-        const gigsList = await Gig.find(search).populate('user');
+        const propositionsList = await Proposition.find(search).populate(
+            'user',
+        );
+        console.log({ propositionsList });
         const metadata = req.newToken
             ? {
                   accessToken: req.newToken,
               }
             : undefined;
         return reply.code(200).send({
-            message: 'Gigs list retrieved.',
-            data: gigsList,
+            message: 'Propositions list retrieved.',
+            data: propositionsList,
             metadata,
         });
     } catch (err) {
@@ -101,13 +95,15 @@ const findOne = async (req: FastifyRequest, reply: FastifyReply) => {
         }
         const search = IsObjectId(_id) ? { _id: _id } : { email: _id };
 
-        const gig = await Gig.findOne(search).populate('proposition.user');
+        const proposition = await Proposition.findOne(search);
 
-        if (!gig) {
-            return reply.code(404).send({ message: 'Gig not found' });
+        if (!proposition) {
+            return reply.code(404).send({ message: 'Proposition not found' });
         }
-        console.log(gig);
-        return reply.code(200).send({ message: 'Gig retrieved.', data: gig });
+        console.log(proposition);
+        return reply
+            .code(200)
+            .send({ message: 'Proposition retrieved.', data: proposition });
     } catch (err) {
         console.log(err);
         return reply.code(500).send({ error: err });
@@ -123,7 +119,7 @@ const _delete = async (req: FastifyRequest, reply: FastifyReply) => {
     }
 
     try {
-        const result = await Gig.deleteOne({ _id, user: auth });
+        const result = await Proposition.deleteOne({ _id, user: auth });
 
         if (result.deletedCount === 0) {
             reply.code(404).send({ message: 'Not found' });

@@ -28,7 +28,7 @@ const updateProfilePicture = async (
             description,
             active,
             budget,
-            userId: req.auth,
+            user: req.auth,
             preferredTechnologies,
         });
 

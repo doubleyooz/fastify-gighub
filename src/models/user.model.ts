@@ -4,6 +4,7 @@ export interface IUser extends Document {
     email: string;
     password: string;
     name: string;
+    description?: string;
     picture?: string;
     wallet?: string;
     tokenVersion?: number;
@@ -13,6 +14,7 @@ export interface LooseIUser {
     email?: string;
     password?: string;
     name?: string;
+    description?: string;
     picture?: string;
     wallet?: string;
     tokenVersion?: number;
@@ -25,6 +27,7 @@ const UserSchema: Schema = new Schema(
         picture: { type: String, default: null },
         wallet: { type: String, default: null },
         name: { type: String, required: true },
+        description: { type: String, default: null },
         tokenVersion: { type: Number, default: 0 },
     },
     { timestamps: true },

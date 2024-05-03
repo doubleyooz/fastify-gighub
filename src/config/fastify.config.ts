@@ -6,9 +6,10 @@ import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import appRoute from '../routes/app.route';
 
-import gigRoute from '../routes/gig.route';
-import userRoute from '../routes/user.route';
 import authRoute from '../routes/auth.route';
+import gigRoute from '../routes/gig.route';
+import propositionRoute from '../routes/proposition.route';
+import userRoute from '../routes/user.route';
 
 import { Payload } from '../utils/auth.util';
 
@@ -72,6 +73,7 @@ app.register(fastifyjwt, {
 
 app.register(appRoute);
 app.register(gigRoute);
+app.register(propositionRoute);
 app.register(userRoute);
 app.register(authRoute);
 

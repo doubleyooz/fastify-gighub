@@ -2,6 +2,7 @@ import {
     email,
     emailOrId,
     name,
+    description,
     searchName,
     searchString,
     password,
@@ -83,9 +84,10 @@ const find = {
 const update = {
     summary: 'update an existing user',
     consumes: ['application/json'],
-    body: looseSchema({ name, picture }, [
+    body: looseSchema({ name, picture, description }, [
         { required: ['name'] },
         { required: ['picture'] },
+        { required: ['description'] },
     ]),
     response: {
         200: {

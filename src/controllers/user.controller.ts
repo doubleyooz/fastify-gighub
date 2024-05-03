@@ -6,32 +6,30 @@ import { IsObjectId } from '../utils/schema.util';
 
 const store = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-        const { email, password, name }: IUser = req.body as IUser;
+        const { email, password, name, description }: IUser = req.body as IUser;
 
-        const trimmedName = name.trim();
-        if (trimmedName.length < 3)
-            return reply.code(400).send({
-                message: 'Bad Request',
-                err: 'Trimmed name is too small!',
-            });
+        console.log(req.body);
 
         const newUser: IUser = new User({
             email: email,
             password: await hashPassword(password),
-            name: trimmedName,
+            name: name,
+            description: description,
         });
-
+        console.log({ newUser });
         const result = await newUser.save();
 
         return reply.code(201).send({
             data: {
                 email: result.email,
                 name: result.name,
+                description: result.description,
                 _id: result._id,
             },
             message: 'User created!',
         });
     } catch (err: any) {
+        console.log({ err });
         if (err.name === 'MongoServerError' && err.code === 11000) {
             return reply.code(400).send({
                 message: 'Email already in use',
@@ -93,12 +91,25 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
     const metadata = newToken ? { accessToken: newToken } : {};
     const body = req.body as UpdateQuery<LooseIUser>;
 
-    body.name = body.name.trim();
-    if (body.name.length < 3)
-        return reply.code(400).send({
-            message: 'Bad Request',
-            err: 'Trimmed name is too small!',
-        });
+    if (body.name) {
+        body.name = body.name.trim();
+
+        if (body.name?.length < 3)
+            return reply.code(400).send({
+                message: 'Bad Request',
+                err: 'Trimmed name is too small!',
+            });
+    }
+
+    if (body.description) {
+        body.description = body.description.trim();
+
+        if (body.description?.length < 3)
+            return reply.code(400).send({
+                message: 'Bad Request',
+                err: 'Trimmed description is too small!',
+            });
+    }
 
     try {
         const result = await User.updateOne({ _id: auth }, body);

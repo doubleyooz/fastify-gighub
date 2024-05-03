@@ -36,13 +36,6 @@ export const IsObjectId = (value: string) => {
     }
 };
 
-export const user = {
-    name: { type: 'string' },
-    email: { type: 'string' },
-    picture: { type: 'string' },
-    _id: { type: 'string' },
-};
-
 const emailPattern =
     "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 
@@ -60,7 +53,7 @@ export const emailOrId = {
 
 export const password = {
     type: 'string',
-    pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
+    // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
 };
 
 export const name = {
@@ -68,6 +61,25 @@ export const name = {
     minLength: 3,
     maxLength: 15,
     pattern: '^[A-Za-z ]+$',
+};
+
+export const description = {
+    type: 'string',
+    minLength: 3,
+    maxLength: 400,
+    pattern: `^[A-Za-z0-9 _.,!;:)("'/$]*$`,
+};
+
+export const picture = {
+    type: 'string',
+};
+
+export const user = {
+    name,
+    email: { type: 'string' },
+    picture,
+    description: { type: 'string' },
+    _id: { type: 'string' },
 };
 
 export const searchName = {
@@ -91,8 +103,12 @@ export const nonNumericTitle = (min: number, maxLength: number) => {
     };
 };
 
-export const picture = {
-    type: 'string',
+export const valueField = (min?: number, max?: number) => {
+    return {
+        type: 'number',
+        ...(min && { minimum: min }),
+        ...(max && { maximum: max }),
+    };
 };
 
 export const Authorization = {

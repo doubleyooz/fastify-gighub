@@ -5,16 +5,12 @@ import {
     IsObjectId,
     looseSchema,
     valueField,
-    user,
 } from '../utils/schema.util';
 
-const gig = {
-    title: nonNumericTitle(1, 30),
+const proposition = {
     description: { type: 'string' },
     budget: valueField(5),
-    type: { type: 'string' },
-    preferredTechnologies: { type: 'array', items: { type: 'string' } },
-    active: { type: 'boolean' },
+    deadline: valueField(1),
 };
 
 const metadata = {
@@ -27,7 +23,7 @@ const metadata = {
 const store = {
     summary: 'creates a new gig and store it',
     consumes: ['application/json'],
-    body: schema(gig),
+    body: schema(proposition),
     response: {
         200: {
             type: 'object',
@@ -50,7 +46,21 @@ const findOne = {
             properties: {
                 data: {
                     type: 'object',
-                    properties: gig,
+                    properties: {
+                        ...proposition,
+                        user: {
+                            email: {
+                                type: 'string',
+                            },
+                            picture: {
+                                type: 'string',
+                            },
+
+                            _id: {
+                                type: 'string',
+                            },
+                        },
+                    },
                 },
                 message: { type: 'string' },
             },
@@ -59,20 +69,11 @@ const findOne = {
 };
 
 const find = {
-    summary: 'returns gigs from the database',
+    summary: 'returns propositions from the database',
     consumes: ['application/json'],
     querystring: looseSchema({
-        title: nonNumericTitle(1, 30),
-        description: { type: 'string' },
-        type: { type: 'string' },
         user: { type: 'string' },
-        preferredTechnologies: {
-            type: 'array',
-            items: {
-                type: 'string',
-            },
-        },
-        active: { type: 'boolean' },
+        gigId: { type: 'string' },
     }),
     response: {
         200: {
@@ -83,8 +84,7 @@ const find = {
                     items: {
                         type: 'object',
                         properties: {
-                            ...gig,
-                            _id: { type: 'string' },
+                            ...proposition,
                             user: {
                                 email: {
                                     type: 'string',
@@ -98,7 +98,12 @@ const find = {
                                 },
                             },
                         },
-                        required: ['title', 'description', '_id', 'active'],
+                        required: [
+                            'description',
+                            'gigId',
+                            'budget',
+                            'deadline',
+                        ],
                     },
                 },
                 metadata,
@@ -111,8 +116,16 @@ const update = {
     summary: 'update an existing gig',
     consumes: ['application/json'],
     body: looseSchema(
-        { title: nonNumericTitle(1, 15), description: { type: 'string' } },
-        [{ required: ['title'] }, { required: ['description'] }],
+        {
+            description: proposition.description,
+            budget: proposition.budget,
+            deadline: proposition.deadline,
+        },
+        [
+            { required: ['deadline'] },
+            { required: ['budget'] },
+            { required: ['description'] },
+        ],
     ),
     response: {
         200: {

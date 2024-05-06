@@ -33,6 +33,22 @@ const app: FastifyPluginCallback = (
         handler: AuthController.me,
     });
 
+    fastify.get(`/message`, {
+        schema: AuthSchema.authGetMessage,
+        handler: AuthController.generateMessage,
+    });
+
+    fastify.post(`/register-wallet`, {
+        preValidation: AuthMiddleware.auth,
+        schema: AuthSchema.metaSignIn,
+        handler: AuthController.registerWallet,
+    });
+
+    fastify.post(`/metamask`, {
+        schema: AuthSchema.metaSignIn,
+        handler: AuthController.authMetamask,
+    });
+
     done();
 };
 

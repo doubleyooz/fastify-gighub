@@ -9,6 +9,7 @@ import {
     picture,
     schema,
     user,
+    wallet,
 } from '../utils/schema.util';
 
 const looseSchema = (
@@ -73,7 +74,7 @@ const find = {
                     items: {
                         type: 'object',
                         properties: user,
-                        required: ['name', 'email', 'picture'],
+                        required: ['name', 'email', 'picture', 'wallet'],
                     },
                 },
             },
@@ -84,10 +85,12 @@ const find = {
 const update = {
     summary: 'update an existing user',
     consumes: ['application/json'],
-    body: looseSchema({ name, picture, description }, [
+    body: looseSchema({ name, picture, description, wallet }, [
         { required: ['name'] },
         { required: ['picture'] },
         { required: ['description'] },
+        { required: ['wallet'] },
+        { required: [] },
     ]),
     response: {
         200: {

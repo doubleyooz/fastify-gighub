@@ -90,7 +90,7 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
     const { newToken, auth } = req;
     const metadata = newToken ? { accessToken: newToken } : {};
     const body = req.body as UpdateQuery<LooseIUser>;
-
+    console.log({ body });
     if (body.name) {
         body.name = body.name.trim();
 

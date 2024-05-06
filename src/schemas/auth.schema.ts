@@ -1,10 +1,52 @@
-import { email, password, Authorization, schema } from '../utils/schema.util';
+import {
+    Authorization,
+    schema,
+    address,
+    message,
+    signedMessage,
+} from '../utils/schema.util';
 
 const signIn = {
     summary:
         'Validate the provided email and password, it will return an access token if it passes the validation',
     consumes: ['application/json'],
     headers: schema({ Authorization: Authorization }),
+    response: {
+        200: {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    properties: {
+                        _id: {
+                            type: 'string',
+                        },
+                        name: {
+                            type: 'string',
+                        },
+                        profile: {
+                            type: 'string',
+                        },
+                    },
+                },
+                metadata: {
+                    type: 'object',
+                    properties: {
+                        accessToken: { type: 'string' },
+                    },
+                },
+
+                message: { type: 'string' },
+            },
+        },
+    },
+};
+
+const metaSignIn = {
+    summary:
+        'Validate the provided email and password, it will return an access token if it passes the validation',
+    consumes: ['application/json'],
+    body: schema({ address, message, signedMessage }),
     response: {
         200: {
             type: 'object',
@@ -45,6 +87,31 @@ const revokeToken = {
             type: 'object',
             properties: {
                 message: { type: 'string' },
+            },
+        },
+    },
+};
+
+const authGetMessage = {
+    summary: "It returns a token that's going to be expected in the auth root",
+    consumes: ['application/json'],
+    response: {
+        200: {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    properties: {
+                        _id: { type: 'string' },
+                    },
+                },
+                message: { type: 'string' },
+                metadata: {
+                    type: 'object',
+                    properties: {
+                        token: { type: 'string' },
+                    },
+                },
             },
         },
     },
@@ -96,4 +163,11 @@ const me = {
     },
 };
 
-export default { refreshToken, revokeToken, me, signIn };
+export default {
+    metaSignIn,
+    refreshToken,
+    authGetMessage,
+    revokeToken,
+    me,
+    signIn,
+};

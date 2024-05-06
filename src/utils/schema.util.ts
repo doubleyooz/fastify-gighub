@@ -56,6 +56,12 @@ export const password = {
     // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
 };
 
+export const wallet = {
+    minLength: 4,
+    type: 'string',
+    // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
+};
+
 export const name = {
     type: 'string',
     minLength: 3,
@@ -78,6 +84,7 @@ export const user = {
     name,
     email: { type: 'string' },
     picture,
+    wallet: { type: 'string' },
     description: { type: 'string' },
     _id: { type: 'string' },
 };
@@ -90,6 +97,21 @@ export const searchName = {
 };
 
 export const searchString = {
+    type: 'string',
+    minLength: 1,
+};
+
+export const address = {
+    type: 'string',
+    minLength: 1,
+};
+
+export const message = {
+    type: 'string',
+    minLength: 1,
+};
+
+export const signedMessage = {
     type: 'string',
     minLength: 1,
 };

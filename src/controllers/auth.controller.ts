@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import User, { IUser } from '../models/user.model';
 import { Payload } from '../utils/auth.util';
 import { matchPassword } from '../utils/password.util';
+import { verifyMessage } from 'ethers';
 
 const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
     const [hashType, hash] = req.headers?.authorization?.split(' ') ?? ['', ''];
@@ -158,4 +159,151 @@ const me = async (req: FastifyRequest, reply: FastifyReply) => {
     });
 };
 
-export default { refreshAccessToken, revokeRefreshToken, me, signIn };
+const authMetamask = async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const { message, signedMessage, address } = req.body as {
+            message: string;
+            address: string;
+            signedMessage: string;
+        };
+
+        req.headers.authorization = `Bearer ${message}`;
+        const payload = await req.messageJwtVerify(message);
+        if (payload.message !== process.env.MESSAGE_CONTENT)
+            return reply.code(401).send({
+                message: 'Unauthorized.',
+            });
+
+        const signerAddr = await verifyMessage(message, signedMessage);
+        console.log({ signerAddr, address });
+        if (signerAddr !== address)
+            return reply.code(401).send({
+                message: 'Unauthorized.',
+            });
+
+        const users = await User.find({ wallet: signerAddr });
+
+        if (users.length !== 1)
+            return reply.code(401).send({
+                message: 'Unauthorized.',
+            });
+        const user = users[0];
+
+        const token = await reply.accessJwtSign({
+            _id: user?._id,
+            tokenVersion: user?.tokenVersion,
+            exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15 minutes
+        });
+
+        const refreshToken = await reply.refreshJwtSign({
+            _id: user?._id,
+            tokenVersion: user?.tokenVersion,
+            exp: Math.floor(Date.now() / 1000) + 60 * 60, //1 hour
+        });
+        console.log({ token, refreshToken });
+        req.headers.authorization = `Bearer ${token}`;
+
+        reply.setCookie('jid', refreshToken, {
+            domain: process.env.CLIENT,
+            sameSite: 'none',
+            path: '/revoke-token',
+            httpOnly: true,
+        });
+        reply.setCookie('jid', refreshToken, {
+            domain: process.env.CLIENT,
+            sameSite: 'none',
+            path: '/refresh-token',
+            httpOnly: true,
+        });
+
+        return reply.code(200).send({
+            data: {
+                _id: user?._id,
+                name: user?.name,
+                picture: user?.picture,
+            },
+            message: 'Successful login.',
+            metadata: {
+                accessToken: token,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        return reply.code(400).send({ message: 'Bad Request' });
+    }
+};
+
+const registerWallet = async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const { message, signedMessage, address } = req.body as {
+            message: string;
+            address: string;
+            signedMessage: string;
+        };
+
+        req.headers.authorization = `Bearer ${message}`;
+        const payload = await req.messageJwtVerify(message);
+        if (payload.message !== process.env.MESSAGE_CONTENT)
+            return reply.code(401).send({
+                message: 'Unauthorized.',
+            });
+
+        const signerAddr = await verifyMessage(message, signedMessage);
+        console.log({ signerAddr, address });
+        if (signerAddr !== address)
+            return reply.code(401).send({
+                message: 'Unauthorized.',
+            });
+
+        const user = await User.findByIdAndUpdate(req.auth, {
+            wallet: signerAddr,
+        });
+
+        if (!user)
+            return reply.code(401).send({
+                message: 'Unauthorized.',
+            });
+
+        const metadata = req.newToken
+            ? {
+                  accessToken: req.newToken,
+              }
+            : undefined;
+
+        return reply.code(200).send({
+            data: {
+                _id: user?._id,
+                name: user?.name,
+                picture: user?.picture,
+            },
+            message: 'Successful login.',
+            metadata,
+        });
+    } catch (err) {
+        console.log(err);
+        return reply.code(400).send({ message: 'Bad Request' });
+    }
+};
+
+const generateMessage = async (req: FastifyRequest, reply: FastifyReply) => {
+    const messageToken = await reply.messageJwtSign({
+        message: process.env.MESSAGE_CONTENT,
+    });
+    console.log({ messageToken });
+
+    return reply.code(200).send({
+        data: { messageToken },
+        metadata: { token: messageToken },
+        message: 'Successful request.',
+    });
+};
+
+export default {
+    refreshAccessToken,
+    revokeRefreshToken,
+    generateMessage,
+    authMetamask,
+    registerWallet,
+    me,
+    signIn,
+};

@@ -11,6 +11,7 @@ import {
 const gig = {
     title: nonNumericTitle(1, 30),
     description: { type: 'string' },
+    contractAddress: { type: 'string' },
     budget: valueField(5),
     type: { type: 'string' },
     preferredTechnologies: { type: 'array', items: { type: 'string' } },

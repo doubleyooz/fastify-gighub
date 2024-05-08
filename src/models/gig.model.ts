@@ -3,6 +3,7 @@ import mongoose, { Document, Schema, SchemaTypeOptions } from 'mongoose';
 export interface IGig extends Document {
     title: string;
     description: string;
+    contractAddress: string;
     budget: number;
     type: string;
     user: mongoose.Schema.Types.ObjectId;
@@ -13,6 +14,7 @@ export interface IGig extends Document {
 export interface LooseIGig {
     title?: string;
     description?: string;
+    contractAddress?: string;
     budget?: number;
     type?: string;
     user?: mongoose.Schema.Types.ObjectId;
@@ -24,6 +26,7 @@ const GigSchema: Schema = new Schema<IGig>(
     {
         title: { type: String, required: true },
         description: { type: String, required: true },
+        contractAddress: { type: String, required: true },
         type: { type: String, required: true },
         budget: { type: Number, required: true, min: 0 },
         preferredTechnologies: { type: [String] },

@@ -42,12 +42,12 @@ const app: FastifyPluginCallback = (
         preHandler: AuthMiddleware.auth,
         handler: PropositionController.findOne,
     });
-    /*
-    fastify.put(`/propositions`, {
+
+    fastify.put(`/propositions/:_id`, {
         schema: PropositionSchema.update,
         preHandler: AuthMiddleware.auth,
         handler: PropositionController.update,
-    });*/
+    });
     done();
 };
 

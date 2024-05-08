@@ -11,6 +11,7 @@ const proposition = {
     description: { type: 'string' },
     budget: valueField(5),
     deadline: valueField(1),
+    gig: { type: 'string' },
 };
 
 const metadata = {
@@ -60,6 +61,14 @@ const findOne = {
                                 type: 'string',
                             },
                         },
+                        gig: {
+                            _id: {
+                                type: 'string',
+                            },
+                            contractAddress: {
+                                type: 'string',
+                            },
+                        },
                     },
                 },
                 message: { type: 'string' },
@@ -73,7 +82,9 @@ const find = {
     consumes: ['application/json'],
     querystring: looseSchema({
         user: { type: 'string' },
-        gigId: { type: 'string' },
+        gig: { type: 'string' },
+
+        status: { type: 'number' },
     }),
     response: {
         200: {
@@ -85,6 +96,8 @@ const find = {
                         type: 'object',
                         properties: {
                             ...proposition,
+                            status: { type: 'number' },
+                            _id: { type: 'string' },
                             user: {
                                 email: {
                                     type: 'string',
@@ -100,8 +113,9 @@ const find = {
                         },
                         required: [
                             'description',
-                            'gigId',
+                            'gig',
                             'budget',
+                            'status',
                             'deadline',
                         ],
                     },
@@ -113,17 +127,19 @@ const find = {
 };
 
 const update = {
-    summary: 'update an existing gig',
+    summary: 'update an existing proposition',
     consumes: ['application/json'],
     body: looseSchema(
         {
             description: proposition.description,
             budget: proposition.budget,
             deadline: proposition.deadline,
+            status: { type: 'number' },
         },
         [
             { required: ['deadline'] },
             { required: ['budget'] },
+            { required: ['status'] },
             { required: ['description'] },
         ],
     ),

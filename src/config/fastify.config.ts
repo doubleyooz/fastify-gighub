@@ -69,7 +69,11 @@ app.register(fastifyCookie, {
 app.register(fastifyjwt, {
     secret: `${process.env.REFRESH_TOKEN_SECRET}`,
     namespace: 'refresh',
-    cookie: { cookieName: 'jid', signed: false },
+    cookie: {
+        cookieName: 'jid',
+        signed: false,
+    },
+
     sign: {
         expiresIn: `${process.env.REFRESH_TOKEN_EXPIRATION}`,
     },
@@ -77,6 +81,7 @@ app.register(fastifyjwt, {
 app.register(fastifyjwt, {
     secret: `${process.env.ACCESS_TOKEN_SECRET}`,
     namespace: 'access',
+
     decode: { complete: true },
     sign: { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRATION}` },
 });

@@ -58,7 +58,7 @@ export const password = {
 
 export const wallet = {
     minLength: 4,
-    type: 'string',
+    type: ['string', 'null'],
     // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
 };
 
@@ -84,7 +84,7 @@ export const user = {
     name,
     email: { type: 'string' },
     picture,
-    wallet: { type: 'string' },
+    wallet,
     description: { type: 'string' },
     _id: { type: 'string' },
 };

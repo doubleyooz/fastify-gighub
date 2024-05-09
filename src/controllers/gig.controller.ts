@@ -12,6 +12,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             preferredTechnologies,
             title,
             budget,
+            contractAddress,
             type,
         }: IGig = req.body as IGig;
 
@@ -21,6 +22,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             description,
             active,
             budget,
+            contractAddress,
             user: req.auth,
             preferredTechnologies,
         });
@@ -39,6 +41,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
         return reply.code(201).send({
             data: {
                 title: result.title,
+                budget: result.budget,
                 description: result.description,
                 _id: result._id,
             },

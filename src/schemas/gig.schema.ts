@@ -15,7 +15,6 @@ const gig = {
     budget: valueField(5),
     type: { type: 'string' },
     preferredTechnologies: { type: 'array', items: { type: 'string' } },
-    active: { type: 'boolean' },
 };
 
 const metadata = {
@@ -51,7 +50,7 @@ const findOne = {
             properties: {
                 data: {
                     type: 'object',
-                    properties: gig,
+                    properties: { ...gig, active: { type: 'boolean' } },
                 },
                 message: { type: 'string' },
             },

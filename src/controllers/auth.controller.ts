@@ -46,16 +46,16 @@ const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
     req.headers.authorization = `Bearer ${token}`;
 
     reply.setCookie('jid', refreshToken, {
-        domain: process.env.CLIENT,
         sameSite: 'none',
         path: '/revoke-token',
         httpOnly: true,
+        secure: true,
     });
     reply.setCookie('jid', refreshToken, {
-        domain: process.env.CLIENT,
         sameSite: 'none',
         path: '/refresh-token',
         httpOnly: true,
+        secure: true,
     });
 
     reply.code(200).send({
@@ -106,6 +106,7 @@ const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
     const refreshToken = req.cookies.jid;
     console.log(req.cookies);
     if (!refreshToken) {
+        console.log('no refresh token');
         return reply.code(401).send({
             message: 'Unauthorized request.',
         });
@@ -118,26 +119,31 @@ const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
         payload = await req.refreshJwtVerify(refreshToken);
     } catch (err) {
         console.log(err);
+        console.log('invalid refresh token');
         return reply.code(401).send({
             message: 'Unauthorized request.',
         });
     }
     console.log('AUTH CONTROLLER');
     console.log(payload);
-    if (!payload)
+    if (!payload) {
+        console.log('no payload');
         return reply.code(401).send({
             message: 'Unauthorized request.',
         });
+    }
 
     const doesUserExists = await User.exists({
         _id: payload._id,
         tokenVersion: payload.tokenVersion,
     });
 
-    if (!doesUserExists)
+    if (!doesUserExists) {
+        console.log('no user');
         return reply.code(401).send({
             message: 'Unauthorized request.',
         });
+    }
 
     const accessToken = await reply.accessJwtSign({
         _id: payload._id,
@@ -204,16 +210,16 @@ const authMetamask = async (req: FastifyRequest, reply: FastifyReply) => {
         req.headers.authorization = `Bearer ${token}`;
 
         reply.setCookie('jid', refreshToken, {
-            domain: process.env.CLIENT,
             sameSite: 'none',
             path: '/revoke-token',
             httpOnly: true,
+            secure: true,
         });
         reply.setCookie('jid', refreshToken, {
-            domain: process.env.CLIENT,
             sameSite: 'none',
             path: '/refresh-token',
             httpOnly: true,
+            secure: true,
         });
 
         return reply.code(200).send({

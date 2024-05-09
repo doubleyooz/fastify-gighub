@@ -60,11 +60,11 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
 
 const find = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-        const { gig: gigId, user } = req.query as LooseIProposition;
+        const { gig: gigId, user, status } = req.query as LooseIProposition;
 
         const search: LooseIProposition = {
             ...(user && { user }),
-            ...(status && { status: parseInt(status) as PROPOSITION_STATUS }),
+            ...(status && { status: status as PROPOSITION_STATUS }),
             ...(gigId && { gig: gigId }),
         };
 

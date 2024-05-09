@@ -116,7 +116,11 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
         if (result.matchedCount === 0) {
             reply.code(404).send({ message: 'Not found', ...metadata });
         } else {
-            reply.code(200).send({ message: 'User updated', ...metadata });
+            reply.code(200).send({
+                data: { ...result },
+                message: 'User updated',
+                ...metadata,
+            });
         }
     } catch (err) {
         console.log(err);

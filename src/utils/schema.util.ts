@@ -62,6 +62,12 @@ export const wallet = {
     // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
 };
 
+export const title = {
+    minLength: 3,
+    type: ['string', 'null'],
+    // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
+};
+
 export const name = {
     type: 'string',
     minLength: 3,
@@ -84,6 +90,7 @@ export const user = {
     name,
     email: { type: 'string' },
     picture,
+    title,
     wallet,
     description: { type: 'string' },
     _id: { type: 'string' },

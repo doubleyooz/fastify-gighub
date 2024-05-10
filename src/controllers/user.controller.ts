@@ -6,7 +6,8 @@ import { IsObjectId } from '../utils/schema.util';
 
 const store = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-        const { email, password, name, description }: IUser = req.body as IUser;
+        const { email, password, name, title, description }: IUser =
+            req.body as IUser;
 
         console.log(req.body);
 
@@ -14,6 +15,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             email: email,
             password: await hashPassword(password),
             name: name,
+            title: title,
             description: description,
         });
         console.log({ newUser });
@@ -23,6 +25,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             data: {
                 email: result.email,
                 name: result.name,
+                title: result.title,
                 description: result.description,
                 _id: result._id,
             },
@@ -98,6 +101,16 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
             return reply.code(400).send({
                 message: 'Bad Request',
                 err: 'Trimmed name is too small!',
+            });
+    }
+
+    if (body.title) {
+        body.title = body.title.trim();
+
+        if (body.title?.length < 3)
+            return reply.code(400).send({
+                message: 'Bad Request',
+                err: 'Trimmed title is too small!',
             });
     }
 

@@ -74,7 +74,14 @@ const find = {
                     items: {
                         type: 'object',
                         properties: user,
-                        required: ['name', 'email', 'picture', 'wallet'],
+                        required: [
+                            'name',
+                            'email',
+                            'description',
+                            'title',
+                            'picture',
+                            'wallet',
+                        ],
                     },
                 },
             },

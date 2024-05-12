@@ -2,14 +2,22 @@ import mongoose, { Document, Schema, SchemaTypeOptions } from 'mongoose';
 
 type DEFAULT_STATE = 0;
 type REJECTED_STATE = 1;
-type PENDING_ACCEPTED_STATE = 2;
-type CONFIRMED_ACCEPTED_STATE = 3;
-export type PROPOSITION_STATUS = // 0 default, 1 rejected, 2 pending-accepted, 3 confirmed-accepted,
+type PENDING_HIRER_APPROVAL_STATE = 2;
+type PENDING_FREELANCER_APPROVAL_STATE = 3;
+type PENDING_FINAL_APPROVAL_STATE = 4;
+type ON_GOING_STATE = 5;
+type FULFILLED_STATE = 6;
+type CANCELLED_STATE = 7;
 
-        | DEFAULT_STATE
-        | REJECTED_STATE
-        | PENDING_ACCEPTED_STATE
-        | CONFIRMED_ACCEPTED_STATE;
+export type PROPOSITION_STATUS =
+    | DEFAULT_STATE
+    | REJECTED_STATE
+    | PENDING_HIRER_APPROVAL_STATE
+    | PENDING_FREELANCER_APPROVAL_STATE
+    | PENDING_FINAL_APPROVAL_STATE
+    | ON_GOING_STATE
+    | FULFILLED_STATE
+    | CANCELLED_STATE;
 
 export interface IProposition extends Document {
     description: string;

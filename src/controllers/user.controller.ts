@@ -58,7 +58,7 @@ const findOne = async (req: FastifyRequest, reply: FastifyReply) => {
         }
         const search = IsObjectId(_id) ? { _id: _id } : { email: _id };
 
-        const user = await User.findOne(search);
+        const user = await User.findOne(search, { populate: 'picture' });
 
         if (!user) {
             return reply.code(404).send({ message: 'User not found' });
@@ -79,7 +79,7 @@ const find = async (req: FastifyRequest, reply: FastifyReply) => {
         if (name) search.name = { $regex: name, $options: 'i' };
         if (email) search.email = { $regex: email, $options: 'i' };
 
-        const user = await User.find(search);
+        const user = await User.find(search, { populate: 'picture' });
         console.log(user);
 
         return reply.code(200).send({ message: 'User retrieved.', data: user });

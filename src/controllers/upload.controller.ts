@@ -7,52 +7,62 @@ import { IsObjectId } from '../utils/schema.util';
 
 import Gig, { IGig, LooseIGig } from '../models/gig.model';
 
+import User, { IUser, LooseIUser } from '../models/user.model';
+import Image, { IImage, LooseIImage } from '../models/image.model';
+
+import path from 'node:path';
+
 const pump = promisify(pipeline);
+
 const updateProfilePicture = async (
     req: FastifyRequest,
     reply: FastifyReply,
 ) => {
+    const { newToken, auth } = req;
+    const metadata = newToken ? { accessToken: newToken } : {};
+    let filePath = '';
     try {
-        const {
-            active,
-            description,
-            preferredTechnologies,
-            title,
-            budget,
-            type,
-        }: IGig = req.body as IGig;
+        const dataFile = await req.file();
+        filePath = dataFile
+            ? path.join(__dirname, '..', '..', '/uploads/', dataFile?.filename)
+            : '';
+        if (dataFile) await pump(dataFile.file, fs.createWriteStream(filePath));
 
-        const newGig: IGig = new Gig({
-            type,
-            title,
-            description,
-            active,
-            budget,
-            user: req.auth,
-            preferredTechnologies,
-        });
-
-        const result = await newGig.save();
+        console.log(dataFile);
         console.log({
             metadata: {
                 accessToken: req.newToken,
             },
         });
-        const metadata = req.newToken
-            ? {
-                  accessToken: req.newToken,
-              }
-            : undefined;
-        return reply.code(201).send({
-            data: {
-                title: result.title,
-                description: result.description,
-                _id: result._id,
+
+        const image = dataFile
+            ? await Image.create({
+                  mimetype: dataFile.mimetype,
+                  filename: dataFile.filename,
+                  size: dataFile.file.bytesRead,
+              })
+            : null;
+
+        console.log(image);
+
+        const result = await User.updateOne(
+            { _id: auth },
+            {
+                picture: image,
             },
+        );
+        console.log(result);
+        if (result.matchedCount === 0) throw new Error('User not found');
+
+        return reply.code(200).send({
+            data: { ...result },
             metadata,
-            message: 'Gig created!',
+            message: 'You can see me',
         });
     } catch (err: any) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
         return reply.code(400).send({
             message: 'Bad Request',
             err: err,

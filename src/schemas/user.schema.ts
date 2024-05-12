@@ -6,7 +6,7 @@ import {
     searchName,
     searchString,
     password,
-    picture,
+    image,
     schema,
     user,
     wallet,
@@ -92,13 +92,21 @@ const find = {
 const update = {
     summary: 'update an existing user',
     consumes: ['application/json'],
-    body: looseSchema({ name, picture, description, wallet }, [
-        { required: ['name'] },
-        { required: ['picture'] },
-        { required: ['description'] },
-        { required: ['wallet'] },
-        { required: [] },
-    ]),
+    body: looseSchema(
+        {
+            name,
+            picture: { type: 'object', properties: { ...image } },
+            description,
+            wallet,
+        },
+        [
+            { required: ['name'] },
+            { required: ['picture'] },
+            { required: ['description'] },
+            { required: ['wallet'] },
+            { required: [] },
+        ],
+    ),
     response: {
         200: {
             type: 'object',
@@ -113,6 +121,7 @@ const update = {
 const _delete = {
     summary: 'delete an existing user',
     consumes: ['application/json'],
+    body: schema({}),
     response: {
         200: {
             type: 'object',

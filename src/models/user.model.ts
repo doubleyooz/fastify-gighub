@@ -6,7 +6,7 @@ export interface IUser extends Document {
     name: string;
     title?: string;
     description?: string;
-    picture?: string;
+    picture?: mongoose.Schema.Types.ObjectId | null;
     wallet?: string;
     tokenVersion?: number;
 }
@@ -17,7 +17,7 @@ export interface LooseIUser {
     name?: string;
     description?: string;
     title?: string;
-    picture?: string;
+    picture?: mongoose.Schema.Types.ObjectId | null;
     wallet?: string;
     tokenVersion?: number;
 }
@@ -26,7 +26,7 @@ const UserSchema: Schema = new Schema(
     {
         email: { type: String, unique: true, required: true },
         password: { type: String, required: true, select: false },
-        picture: { type: String, default: null },
+        picture: { type: Schema.Types.ObjectId, ref: 'Image', default: null },
         title: { type: String, default: null },
         wallet: { type: String, default: null },
         name: { type: String, required: true },

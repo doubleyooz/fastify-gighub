@@ -82,14 +82,16 @@ export const description = {
     pattern: `^[A-Za-z0-9 _.,!;:)("'/$]*$`,
 };
 
-export const picture = {
-    type: 'string',
+export const image = {
+    size: { type: 'number' },
+    filename: { type: 'string' },
+    mimetype: { type: 'string' },
 };
 
 export const user = {
     name,
     email: { type: 'string' },
-    picture,
+    picture: { type: 'object', properties: { ...image } },
     title,
     wallet,
     description: { type: 'string' },

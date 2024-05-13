@@ -14,7 +14,7 @@ const gig = {
     contractAddress: { type: 'string' },
     budget: valueField(5),
     type: { type: 'string' },
-    preferredTechnologies: { type: 'array', items: { type: 'string' } },
+    skills: { type: 'array', items: { type: 'string' } },
 };
 
 const metadata = {
@@ -66,7 +66,7 @@ const find = {
         description: { type: 'string' },
         type: { type: 'string' },
         user: { type: 'string' },
-        preferredTechnologies: {
+        skills: {
             type: 'array',
             items: {
                 type: 'string',

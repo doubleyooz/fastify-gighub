@@ -89,6 +89,7 @@ const find = {
                             'email',
                             'description',
                             'title',
+                            'skills',
                             'picture',
                             'wallet',
                         ],

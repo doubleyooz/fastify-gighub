@@ -6,6 +6,7 @@ export interface IUser extends Document {
     name: string;
     title?: string;
     description?: string;
+    skills?: string[];
     picture?: mongoose.Schema.Types.ObjectId | null;
     wallet?: string;
     tokenVersion?: number;
@@ -18,6 +19,7 @@ export interface LooseIUser {
     description?: string;
     title?: string;
     picture?: mongoose.Schema.Types.ObjectId | null;
+    skills?: string[];
     wallet?: string;
     tokenVersion?: number;
 }
@@ -30,6 +32,7 @@ const UserSchema: Schema = new Schema(
         title: { type: String, default: null },
         wallet: { type: String, default: null },
         name: { type: String, required: true },
+        skills: { type: [String], default: [] },
         description: { type: String, default: null },
         tokenVersion: { type: Number, default: 0 },
     },

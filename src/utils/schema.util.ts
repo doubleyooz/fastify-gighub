@@ -94,6 +94,7 @@ export const user = {
     picture: { type: 'object', properties: { ...image } },
     title,
     wallet,
+    skills: { type: 'array', items: { type: 'string' } },
     description: { type: 'string' },
     _id: { type: 'string' },
 };

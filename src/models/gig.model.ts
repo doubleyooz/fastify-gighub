@@ -7,7 +7,7 @@ export interface IGig extends Document {
     budget: number;
     type: string;
     user: mongoose.Schema.Types.ObjectId;
-    preferredTechnologies: string[];
+    skills: string[];
     active?: boolean;
 }
 
@@ -18,7 +18,7 @@ export interface LooseIGig {
     budget?: number;
     type?: string;
     user?: mongoose.Schema.Types.ObjectId;
-    preferredTechnologies?: string[];
+    skills?: string[];
     active?: boolean;
 }
 
@@ -29,7 +29,7 @@ const GigSchema: Schema = new Schema<IGig>(
         contractAddress: { type: String, required: true },
         type: { type: String, required: true },
         budget: { type: Number, required: true, min: 0 },
-        preferredTechnologies: { type: [String] },
+        skills: { type: [String], default: [] },
         user: { type: Schema.Types.ObjectId, ref: 'User' },
         active: { type: Boolean, default: true },
     },

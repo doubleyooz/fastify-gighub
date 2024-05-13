@@ -9,7 +9,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
         const {
             active,
             description,
-            preferredTechnologies,
+            skills,
             title,
             budget,
             contractAddress,
@@ -24,7 +24,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
             budget,
             contractAddress,
             user: req.auth,
-            preferredTechnologies,
+            skills,
         });
 
         const result = await newGig.save();
@@ -58,18 +58,12 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
 
 const find = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-        const {
-            active,
-            preferredTechnologies,
-            description,
-            title,
-            type,
-            user,
-        } = req.query as LooseIGig;
+        const { active, skills, description, title, type, user } =
+            req.query as LooseIGig;
 
         const search: LooseIGig = {
             ...(typeof active === 'boolean' && { active }),
-            ...(preferredTechnologies && { preferredTechnologies }),
+            ...(skills && { skills }),
             ...(type && { type }),
             ...(user && { user }),
             ...(title && { title: { $regex: title, $options: 'i' } as any }),

@@ -4,7 +4,7 @@ import Proposition, {
     IProposition,
     LooseIProposition,
     PROPOSITION_STATUS,
-} from '../models/proposition.model';
+} from '../models/proposal.model';
 
 import { IsObjectId } from '../utils/schema.util';
 

@@ -4,6 +4,7 @@ import {
     address,
     message,
     signedMessage,
+    image,
 } from '../utils/schema.util';
 
 const signIn = {
@@ -24,8 +25,9 @@ const signIn = {
                         name: {
                             type: 'string',
                         },
-                        profile: {
-                            type: 'string',
+                        picture: {
+                            type: 'object',
+                            properties: { ...image },
                         },
                     },
                 },
@@ -60,8 +62,9 @@ const metaSignIn = {
                         name: {
                             type: 'string',
                         },
-                        profile: {
-                            type: 'string',
+                        picture: {
+                            type: 'object',
+                            properties: { ...image },
                         },
                     },
                 },

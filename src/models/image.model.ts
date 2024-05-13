@@ -2,24 +2,18 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IImage extends Document {
     size: number;
-    filename: string;
-    mimetype: string;
+    ext: string;
 }
 
 export interface LooseIImage {
     size?: number;
-    filename?: string;
-    mimetype?: string;
+    ext?: string;
 }
 
 const ImageSchema: Schema = new Schema<IImage>(
     {
         size: Number,
-        filename: {
-            type: String,
-        },
-
-        mimetype: String,
+        ext: String,
     },
     { timestamps: true },
 );

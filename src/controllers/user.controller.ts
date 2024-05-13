@@ -79,7 +79,7 @@ const find = async (req: FastifyRequest, reply: FastifyReply) => {
         if (name) search.name = { $regex: name, $options: 'i' };
         if (email) search.email = { $regex: email, $options: 'i' };
 
-        const user = await User.find(search, { populate: 'picture' });
+        const user = await User.find(search).populate('picture');
         console.log(user);
 
         return reply.code(200).send({ message: 'User retrieved.', data: user });

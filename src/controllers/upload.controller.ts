@@ -11,6 +11,7 @@ import User, { IUser, LooseIUser } from '../models/user.model';
 import Image, { IImage, LooseIImage } from '../models/image.model';
 
 import path from 'node:path';
+import { uniqueFileName } from '../utils/upload.util';
 
 const pump = promisify(pipeline);
 
@@ -23,39 +24,58 @@ const updateProfilePicture = async (
     let filePath = '';
     try {
         const dataFile = await req.file();
-        filePath = dataFile
-            ? path.join(__dirname, '..', '..', '/uploads/', dataFile?.filename)
-            : '';
-        if (dataFile) await pump(dataFile.file, fs.createWriteStream(filePath));
 
-        console.log(dataFile);
         console.log({
             metadata: {
                 accessToken: req.newToken,
             },
         });
-
+        const ext = dataFile ? dataFile.filename.split('.')[1] : null;
         const image = dataFile
             ? await Image.create({
-                  mimetype: dataFile.mimetype,
-                  filename: dataFile.filename,
+                  ext,
                   size: dataFile.file.bytesRead,
               })
             : null;
 
-        console.log(image);
+        if (image && dataFile) {
+            filePath = image
+                ? path.join(
+                      __dirname,
+                      '..',
+                      '..',
+                      '/public/',
+                      image.id + '.' + ext,
+                  )
+                : '';
+            await pump(dataFile.file, fs.createWriteStream(filePath));
+        }
 
-        const result = await User.updateOne(
+        const result = await User.findOneAndUpdate(
             { _id: auth },
             {
                 picture: image,
             },
+            {},
         );
         console.log(result);
-        if (result.matchedCount === 0) throw new Error('User not found');
+        console.log(result?.picture);
+        if (!result) throw new Error('User not found');
+        if (result.picture) {
+            await Image.deleteOne({ _id: result.picture });
+            const dirPath = path.join(__dirname, '..', '..', '/public/');
+            const files = fs.readdirSync(dirPath);
+            const fileToDelete = files.find(file =>
+                file.startsWith(result.picture as any as string),
+            );
+
+            if (fileToDelete) {
+                fs.unlinkSync(path.join(dirPath, fileToDelete));
+            }
+        }
 
         return reply.code(200).send({
-            data: { ...result },
+            data: image,
             metadata,
             message: 'You can see me',
         });
@@ -69,34 +89,5 @@ const updateProfilePicture = async (
         });
     }
 };
-/*
-async function (req, reply) {
-        // process a single file
-        // also, consider that if you allow to upload multiple files
-        // you must consume all files otherwise the promise will never fulfill
-        const data = await req.file();
-
-        data.file; // stream
-        data.fields; // other parsed parts
-        data.fieldname;
-        data.filename;
-        data.encoding;
-        data.mimetype;
-
-        // to accumulate the file in memory! Be careful!
-        //
-        // await data.toBuffer() // Buffer
-        //
-        // or
-
-        await pump(data.file, fs.createWriteStream(data.filename));
-
-        // be careful of permission issues on disk and not overwrite
-        // sensitive files that could cause security risks
-
-        // also, consider that if the file stream is not consumed, the promise will never fulfill
-
-        reply.send();
-*/
 
 export default { updateProfilePicture };

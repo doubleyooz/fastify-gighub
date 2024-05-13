@@ -4,7 +4,6 @@ import { Payload } from '../utils/auth.util';
 
 const auth = async (req: FastifyRequest, reply: FastifyReply) => {
     console.log('middleman');
-
     const [, token] = req.headers.authorization
         ? req.headers.authorization.split(' ')
         : [, ''];

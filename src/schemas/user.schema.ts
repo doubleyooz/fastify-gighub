@@ -64,7 +64,11 @@ const findOne = {
 const find = {
     summary: 'returns users from the database',
     consumes: ['application/json'],
-    querystring: looseSchema({ name: searchName, email: searchString }),
+    querystring: looseSchema({ name: searchName, email: searchString }, [
+        { required: ['name'] },
+        { required: ['email'] },
+        { required: [] },
+    ]),
     response: {
         200: {
             type: 'object',
@@ -73,7 +77,13 @@ const find = {
                     type: 'array',
                     items: {
                         type: 'object',
-                        properties: user,
+                        properties: {
+                            ...user,
+                            picture: {
+                                type: 'object',
+                                properties: { ...image },
+                            },
+                        },
                         required: [
                             'name',
                             'email',

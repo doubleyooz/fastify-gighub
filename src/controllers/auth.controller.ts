@@ -133,10 +133,10 @@ const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
         });
     }
 
-    const doesUserExists = await User.exists({
+    const doesUserExists = await User.findOne({
         _id: payload._id,
         tokenVersion: payload.tokenVersion,
-    });
+    }).populate('picture');
 
     if (!doesUserExists) {
         console.log('no user');
@@ -151,9 +151,13 @@ const refreshAccessToken = async (req: FastifyRequest, reply: FastifyReply) => {
     });
 
     return reply.code(200).send({
-        data: { _id: payload._id },
+        data: {
+            _id: doesUserExists._id,
+            name: doesUserExists.name,
+            picture: doesUserExists.picture,
+        },
         metadata: { accessToken },
-        message: 'Successful request.',
+        message: 'Successful login.',
     });
 };
 
@@ -187,23 +191,24 @@ const authMetamask = async (req: FastifyRequest, reply: FastifyReply) => {
                 message: 'Unauthorized.',
             });
 
-        const users = await User.find({ wallet: signerAddr });
+        const user = await User.findOne({ wallet: signerAddr }).populate(
+            'picture',
+        );
 
-        if (users.length !== 1)
+        if (!user)
             return reply.code(401).send({
                 message: 'Unauthorized.',
             });
-        const user = users[0];
 
         const token = await reply.accessJwtSign({
-            _id: user?._id,
-            tokenVersion: user?.tokenVersion,
+            _id: user._id,
+            tokenVersion: user.tokenVersion,
             exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15 minutes
         });
 
         const refreshToken = await reply.refreshJwtSign({
-            _id: user?._id,
-            tokenVersion: user?.tokenVersion,
+            _id: user._id,
+            tokenVersion: user.tokenVersion,
             exp: Math.floor(Date.now() / 1000) + 60 * 60, //1 hour
         });
         console.log({ token, refreshToken });
@@ -224,9 +229,9 @@ const authMetamask = async (req: FastifyRequest, reply: FastifyReply) => {
 
         return reply.code(200).send({
             data: {
-                _id: user?._id,
-                name: user?.name,
-                picture: user?.picture,
+                _id: user._id,
+                name: user.name,
+                picture: user.picture,
             },
             message: 'Successful login.',
             metadata: {

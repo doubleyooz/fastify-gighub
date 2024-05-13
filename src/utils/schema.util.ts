@@ -84,8 +84,8 @@ export const description = {
 
 export const image = {
     size: { type: 'number' },
-    filename: { type: 'string' },
-    mimetype: { type: 'string' },
+    ext: { type: 'string' },
+    _id: { type: 'string' },
 };
 
 export const user = {

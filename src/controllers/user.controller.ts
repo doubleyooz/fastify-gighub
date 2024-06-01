@@ -93,7 +93,8 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
     const { newToken, auth } = req;
     const metadata = newToken ? { accessToken: newToken } : {};
     const body = req.body as UpdateQuery<LooseIUser>;
-    console.log({ body });
+    console.log('update');
+    console.log({ update: body });
     if (body.name) {
         body.name = body.name.trim();
 
@@ -106,22 +107,10 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
 
     if (body.title) {
         body.title = body.title.trim();
-
-        if (body.title?.length < 3)
-            return reply.code(400).send({
-                message: 'Bad Request',
-                err: 'Trimmed title is too small!',
-            });
     }
 
     if (body.description) {
         body.description = body.description.trim();
-
-        if (body.description?.length < 3)
-            return reply.code(400).send({
-                message: 'Bad Request',
-                err: 'Trimmed description is too small!',
-            });
     }
 
     try {
@@ -130,7 +119,7 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
             reply.code(404).send({ message: 'Not found', ...metadata });
         } else {
             reply.code(200).send({
-                data: { ...result },
+                data: { ...body },
                 message: 'User updated',
                 ...metadata,
             });

@@ -68,6 +68,11 @@ export const title = {
     // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
 };
 
+export const userTitle = {
+    type: ['string', 'null'],
+    // pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$',
+};
+
 export const name = {
     type: 'string',
     minLength: 3,
@@ -133,6 +138,13 @@ export const nonNumericTitle = (min: number, maxLength: number) => {
         maxLength: maxLength,
         pattern: '^[A-Za-z ]+$',
     };
+};
+
+export const metadata = {
+    type: 'object',
+    properties: {
+        token: { type: 'string' },
+    },
 };
 
 export const valueField = (min?: number, max?: number) => {

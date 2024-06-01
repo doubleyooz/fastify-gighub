@@ -3,12 +3,14 @@ import {
     emailOrId,
     name,
     description,
+    image,
+    metadata,
+    password,
+    schema,
     searchName,
     searchString,
-    password,
-    image,
-    schema,
     user,
+    userTitle,
     wallet,
 } from '../utils/schema.util';
 
@@ -105,6 +107,7 @@ const update = {
     consumes: ['application/json'],
     body: looseSchema(
         {
+            title: userTitle,
             name,
             picture: { type: 'object', properties: { ...image } },
             description,
@@ -122,8 +125,14 @@ const update = {
         200: {
             type: 'object',
             properties: {
-                data: { type: 'string' },
+                data: {
+                    type: 'object',
+                    properties: {
+                        ...user,
+                    },
+                },
                 message: { type: 'string' },
+                metadata,
             },
         },
     },

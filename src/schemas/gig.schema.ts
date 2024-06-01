@@ -5,6 +5,7 @@ import {
     IsObjectId,
     looseSchema,
     valueField,
+    metadata,
     user,
 } from '../utils/schema.util';
 
@@ -15,13 +16,6 @@ const gig = {
     budget: valueField(5),
     type: { type: 'string' },
     skills: { type: 'array', items: { type: 'string' } },
-};
-
-const metadata = {
-    type: 'object',
-    properties: {
-        token: { type: 'string' },
-    },
 };
 
 const store = {

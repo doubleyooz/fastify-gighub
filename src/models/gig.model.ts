@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, SchemaTypeOptions } from 'mongoose';
+import { ISkill } from './skill.model';
 
 export interface IGig extends Document {
     title: string;
@@ -7,8 +8,9 @@ export interface IGig extends Document {
     budget: number;
     type: string;
     user: mongoose.Schema.Types.ObjectId;
-    skills: string[];
+    skills: ISkill[];
     active?: boolean;
+    archived_at?: string;
 }
 
 export interface LooseIGig {
@@ -18,8 +20,9 @@ export interface LooseIGig {
     budget?: number;
     type?: string;
     user?: mongoose.Schema.Types.ObjectId;
-    skills?: string[];
+    skills?: ISkill[];
     active?: boolean;
+    archived_at?: string;
 }
 
 const GigSchema: Schema = new Schema<IGig>(
@@ -29,9 +32,11 @@ const GigSchema: Schema = new Schema<IGig>(
         contractAddress: { type: String, required: true },
         type: { type: String, required: true },
         budget: { type: Number, required: true, min: 0 },
-        skills: { type: [String], default: [] },
+        skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
+
         user: { type: Schema.Types.ObjectId, ref: 'User' },
         active: { type: Boolean, default: true },
+        archived_at: { type: String, default: null },
     },
     { timestamps: true },
 );

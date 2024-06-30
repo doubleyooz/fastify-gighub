@@ -15,12 +15,9 @@ const signIn = async (req: FastifyRequest, reply: FastifyReply) => {
         .toString()
         .split(':');
 
-    const user = await User.findOne({ email: email }).select([
-        'name',
-        'picture',
-        'password',
-        'tokenVersion',
-    ]);
+    const user = await User.findOne({ email: email })
+        .select(['name', 'password', 'tokenVersion'])
+        .populate('picture');
 
     const match = user
         ? await matchPassword(user.password, supposedPassword)
@@ -194,6 +191,8 @@ const authMetamask = async (req: FastifyRequest, reply: FastifyReply) => {
         const user = await User.findOne({ wallet: signerAddr }).populate(
             'picture',
         );
+
+        console.log({ user });
 
         if (!user)
             return reply.code(401).send({

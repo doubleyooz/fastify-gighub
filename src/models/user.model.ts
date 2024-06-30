@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import skillModel, { ISkill } from './skill.model';
 
 export interface IUser extends Document {
     email: string;
@@ -6,7 +7,7 @@ export interface IUser extends Document {
     name: string;
     title?: string;
     description?: string;
-    skills?: string[];
+    skills?: ISkill[];
     picture?: mongoose.Schema.Types.ObjectId | null;
     wallet?: string;
     tokenVersion?: number;
@@ -19,12 +20,12 @@ export interface LooseIUser {
     description?: string;
     title?: string;
     picture?: mongoose.Schema.Types.ObjectId | null;
-    skills?: string[];
+    skills?: ISkill[];
     wallet?: string;
     tokenVersion?: number;
 }
 
-const UserSchema: Schema = new Schema(
+const UserSchema: Schema = new Schema<IUser>(
     {
         email: { type: String, unique: true, required: true },
         password: { type: String, required: true, select: false },
@@ -32,11 +33,27 @@ const UserSchema: Schema = new Schema(
         title: { type: String, default: null },
         wallet: { type: String, default: null },
         name: { type: String, required: true },
-        skills: { type: [String], default: [] },
+        skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
+
         description: { type: String, default: null },
         tokenVersion: { type: Number, default: 0 },
     },
     { timestamps: true },
+);
+
+UserSchema.pre(
+    'remove' as unknown as RegExp | 'createCollection',
+    function (next) {
+        const self = this as unknown as typeof mongoose & { _id: any }; // Store the current context
+
+        // Now, self refers to the Mongoose document
+        self.model('Gig').updateMany(
+            { user: self._id },
+            { archived_at: new Date().toISOString() },
+            next,
+        );
+        self.model('Skill').updateMany({ $pull: { users: self._id } }, next);
+    },
 );
 
 export default mongoose.model<IUser>('User', UserSchema);

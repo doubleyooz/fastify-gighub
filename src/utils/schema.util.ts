@@ -41,6 +41,11 @@ const emailPattern =
 
 const objectIdPattern = '^[0-9a-f]{24}$';
 
+export const _id = {
+    type: 'string',
+    pattern: objectIdPattern,
+};
+
 export const email = {
     type: 'string',
     pattern: emailPattern,
@@ -90,7 +95,12 @@ export const description = {
 export const image = {
     size: { type: 'number' },
     ext: { type: 'string' },
-    _id: { type: 'string' },
+    _id,
+};
+
+export const skill = {
+    _id,
+    title: { type: 'string' },
 };
 
 export const user = {
@@ -99,9 +109,12 @@ export const user = {
     picture: { type: 'object', properties: { ...image } },
     title,
     wallet,
-    skills: { type: 'array', items: { type: 'string' } },
+    skills: {
+        type: 'array',
+        items: { type: 'object', properties: { ...skill } },
+    },
     description: { type: 'string' },
-    _id: { type: 'string' },
+    _id,
 };
 
 export const searchName = {

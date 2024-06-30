@@ -1,6 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Types, UpdateQuery } from 'mongoose';
+import mongoose, { Types, UpdateQuery } from 'mongoose';
+import Skill, { ISkill, LooseISkill } from '../models/skill.model';
 import User, { IUser, LooseIUser } from '../models/user.model';
+import Gig, { IGig, LooseIGig } from '../models/gig.model';
 import { hashPassword } from '../utils/password.util';
 import { IsObjectId } from '../utils/schema.util';
 
@@ -58,7 +60,7 @@ const findOne = async (req: FastifyRequest, reply: FastifyReply) => {
         }
         const search = IsObjectId(_id) ? { _id: _id } : { email: _id };
 
-        const user = await User.findOne(search, { populate: 'picture' });
+        const user = await User.findOne(search).populate('picture');
 
         if (!user) {
             return reply.code(404).send({ message: 'User not found' });
@@ -79,7 +81,7 @@ const find = async (req: FastifyRequest, reply: FastifyReply) => {
         if (name) search.name = { $regex: name, $options: 'i' };
         if (email) search.email = { $regex: email, $options: 'i' };
 
-        const user = await User.find(search).populate('picture');
+        const user = await User.find(search).populate(['picture', 'skills']);
         console.log(user);
 
         return reply.code(200).send({ message: 'User retrieved.', data: user });
@@ -135,19 +137,30 @@ const update = async (req: FastifyRequest, reply: FastifyReply) => {
 const _delete = async (req: FastifyRequest, reply: FastifyReply) => {
     const { newToken, auth } = req;
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        const result = await User.deleteOne({ _id: auth });
+        const result = await User.deleteOne({ _id: auth }).session(session);
+
         if (result.deletedCount === 0) {
-            reply.code(404).send({ message: 'Not found' });
-        } else {
-            reply.code(200).send({ message: 'User deleted' });
+            await session.abortTransaction();
+            session.endSession();
+            return reply.code(404).send({ message: 'User not found' });
         }
+
+        await Skill.updateMany({ users: auth }, { $pull: { users: auth } });
+        await Gig.deleteMany({ user: auth }, { $pull: { skills: auth } });
+
+        await session.commitTransaction();
+        session.endSession();
+        return reply.code(200).send({ message: 'Skill deleted' });
     } catch (err) {
         console.log(err);
-        reply.code(500).send({ error: err });
+        await session.abortTransaction();
+        session.endSession();
+        return reply.code(500).send({ error: err });
     }
-
-    return reply;
 };
 
 export default { store, find, findOne, update, _delete };

@@ -1,6 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as fs from 'node:fs';
-import { Types, UpdateQuery } from 'mongoose';
 import { pipeline } from 'node:stream';
 import { promisify } from 'node:util';
 import { IsObjectId } from '../utils/schema.util';

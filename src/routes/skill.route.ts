@@ -3,32 +3,30 @@ import {
     FastifyPluginCallback,
     FastifyPluginOptions,
 } from 'fastify';
-import GigControllers from '../controllers/gig.controller';
+import SkillController from '../controllers/skill.controller';
 import AuthMiddleware from '../middlewares/auth.middleware';
-import GigSchema from '../schemas/gig.schema';
+import SkillSchema from '../schemas/skill.schema';
 import { IsObjectId } from '../utils/schema.util';
-import GigMiddleware from '../middlewares/gig.middleware';
 
 const app: FastifyPluginCallback = (
     fastify: FastifyInstance,
     options: FastifyPluginOptions,
     done: () => void,
 ) => {
-    fastify.post(`/gigs`, {
+    fastify.post(`/skills`, {
         preValidation: AuthMiddleware.auth,
-        schema: GigSchema.store,
-        preHandler: GigMiddleware.trimFields,
-        handler: GigControllers.store,
+        schema: SkillSchema.store,
+        handler: SkillController.store,
     });
 
-    fastify.get(`/gigs`, {
-        schema: GigSchema.find,
+    fastify.get(`/skills`, {
+        schema: SkillSchema.find,
         preHandler: AuthMiddleware.auth,
-        handler: GigControllers.find,
+        handler: SkillController.find,
     });
 
-    fastify.get(`/gigs/:_id`, {
-        schema: GigSchema.findOne,
+    fastify.get(`/skills/:_id`, {
+        schema: SkillSchema.findOne,
         preValidation: async (request, reply) => {
             const { _id } = request.params as { _id: string };
             if (!IsObjectId(_id)) {
@@ -36,14 +34,14 @@ const app: FastifyPluginCallback = (
             }
         },
         preHandler: AuthMiddleware.auth,
-        handler: GigControllers.findOne,
+        handler: SkillController.findOne,
     });
-    /*
-    fastify.put(`/gigs`, {
-        schema: GigSchema.update,
+
+    fastify.put(`/skills/:_id`, {
+        schema: SkillSchema.update,
         preHandler: AuthMiddleware.auth,
-        handler: GigControllers.update,
-    });*/
+        handler: SkillController.update,
+    });
     done();
 };
 

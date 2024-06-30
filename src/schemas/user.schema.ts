@@ -12,23 +12,8 @@ import {
     user,
     userTitle,
     wallet,
+    looseSchema,
 } from '../utils/schema.util';
-
-const looseSchema = (
-    props: Record<string, any>,
-    requiredProperties?: {
-        required: string[];
-    }[],
-) => {
-    return {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-            ...props,
-        },
-        anyOf: requiredProperties,
-    };
-};
 
 const store = {
     summary: 'creates a new user and store it',
@@ -55,7 +40,13 @@ const findOne = {
             properties: {
                 data: {
                     type: 'object',
-                    properties: user,
+                    properties: {
+                        ...user,
+                        picture: {
+                            type: 'object',
+                            properties: { ...image },
+                        },
+                    },
                 },
                 message: { type: 'string' },
             },

@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, SchemaTypeOptions } from 'mongoose';
+import { GIG, PROPOSITION, USER } from '../utils/constants';
 
 type DEFAULT_STATE = 0;
 type REJECTED_STATE = 1;
@@ -44,10 +45,10 @@ const PropositionSchema: Schema = new Schema<IProposition>(
         budget: { type: Number, required: true, min: 10 },
         deadline: { type: Number, required: true, min: 1 },
         status: { type: Number, default: 0 },
-        gig: { type: Schema.Types.ObjectId, ref: 'Gig' },
-        user: { type: Schema.Types.ObjectId, ref: 'User' },
+        gig: { type: Schema.Types.ObjectId, ref: GIG },
+        user: { type: Schema.Types.ObjectId, ref: USER },
     },
     { timestamps: true },
 );
 
-export default mongoose.model<IProposition>('Proposition', PropositionSchema);
+export default mongoose.model<IProposition>(PROPOSITION, PropositionSchema);

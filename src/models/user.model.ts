@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import skillModel, { ISkill } from './skill.model';
+import { GIG, IMAGE, SKILL, USER } from '../utils/constants';
 
 export interface IUser extends Document {
     email: string;
@@ -29,11 +30,11 @@ const UserSchema: Schema = new Schema<IUser>(
     {
         email: { type: String, unique: true, required: true },
         password: { type: String, required: true, select: false },
-        picture: { type: Schema.Types.ObjectId, ref: 'Image', default: null },
+        picture: { type: Schema.Types.ObjectId, ref: IMAGE, default: null },
         title: { type: String, default: null },
         wallet: { type: String, default: null },
         name: { type: String, required: true },
-        skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
+        skills: [{ type: Schema.Types.ObjectId, ref: SKILL }],
 
         description: { type: String, default: null },
         tokenVersion: { type: Number, default: 0 },
@@ -47,13 +48,13 @@ UserSchema.pre(
         const self = this as unknown as typeof mongoose & { _id: any }; // Store the current context
 
         // Now, self refers to the Mongoose document
-        self.model('Gig').updateMany(
+        self.model(GIG).updateMany(
             { user: self._id },
             { archived_at: new Date().toISOString() },
             next,
         );
-        self.model('Skill').updateMany({ $pull: { users: self._id } }, next);
+        self.model(SKILL).updateMany({ $pull: { users: self._id } }, next);
     },
 );
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<IUser>(USER, UserSchema);

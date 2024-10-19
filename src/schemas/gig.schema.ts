@@ -106,9 +106,22 @@ const update = {
     summary: 'update an existing gig',
     consumes: ['application/json'],
     body: looseSchema(
-        { title: nonNumericTitle(1, 15), description: { type: 'string' } },
+        {
+            title: nonNumericTitle(1, 30),
+            description: { type: 'string' },
+            type: { type: 'string' },
+            budget: { type: 'number' },
+            skills: {
+                type: 'array',
+                items: {
+                    type: 'string',
+                },
+            },
+            active: { type: 'boolean' },
+        },
         [{ required: ['title'] }, { required: ['description'] }],
     ),
+    params: schema({ _id }),
     response: {
         200: {
             type: 'object',

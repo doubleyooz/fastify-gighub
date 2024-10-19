@@ -3,6 +3,7 @@ import { Types, UpdateQuery } from 'mongoose';
 import Gig, { IGig, LooseIGig } from '../models/gig.model';
 
 import { IsObjectId } from '../utils/schema.util';
+import { getMessage } from '../utils/message.util';
 
 const store = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -50,7 +51,7 @@ const store = async (req: FastifyRequest, reply: FastifyReply) => {
         });
     } catch (err: any) {
         return reply.code(400).send({
-            message: 'Bad Request',
+            message: getMessage('default.badRequest'),
             err: err,
         });
     }
@@ -111,6 +112,63 @@ const findOne = async (req: FastifyRequest, reply: FastifyReply) => {
     }
 };
 
+const update = async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const {
+            active,
+            description,
+            skills,
+            title,
+            budget,
+            contractAddress,
+            type,
+        }: IGig = req.body as IGig;
+
+        const { _id } = req.params as { _id: string };
+
+        if (!_id) {
+            return reply.code(400).send({ message: getMessage('invalid.object.id') });
+        }
+
+        
+        const updateBody: LooseIGig = {
+            ...(typeof active === 'boolean' && { active }),
+            ...(skills && { skills }),
+            ...(type && { type }),
+            ...(title && { title }),
+            ...(budget && { budget }),
+            ...(contractAddress && { contractAddress }),
+            ...(description && {
+                description
+            }),
+        };
+
+        const result = await Gig.findByIdAndUpdate(_id, {
+           ...updateBody
+        })
+
+   
+      
+        const metadata = req.newToken
+            ? {
+                  accessToken: req.newToken,
+              }
+            : undefined;
+        return reply.code(201).send({
+            data: {
+                result
+            },
+            metadata,
+            message: 'Gig updated',
+        });
+    } catch (err: any) {
+        return reply.code(400).send({
+            message: getMessage('default.badRequest'),
+            err: err,
+        });
+    }
+};
+
 const _delete = async (req: FastifyRequest, reply: FastifyReply) => {
     const { newToken, auth } = req;
     const { _id } = req.params as { _id: string };
@@ -135,4 +193,4 @@ const _delete = async (req: FastifyRequest, reply: FastifyReply) => {
     return reply;
 };
 
-export default { store, find, findOne, _delete };
+export default { store, update, find, findOne, _delete };

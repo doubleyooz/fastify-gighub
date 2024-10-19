@@ -38,12 +38,12 @@ const app: FastifyPluginCallback = (
         preHandler: AuthMiddleware.auth,
         handler: GigControllers.findOne,
     });
-    /*
-    fastify.put(`/gigs`, {
+
+    fastify.put(`/gigs/:_id`, {
         schema: GigSchema.update,
         preHandler: AuthMiddleware.auth,
         handler: GigControllers.update,
-    });*/
+    });
     done();
 };
 

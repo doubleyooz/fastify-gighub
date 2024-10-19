@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, SchemaTypeOptions } from 'mongoose';
+import { GIG, SKILL, USER } from '../utils/constants';
 
 export interface ISkill extends Document {
     title: string;
@@ -15,8 +16,8 @@ export interface LooseISkill {
 const SkillSchema: Schema = new Schema<ISkill>(
     {
         title: { type: String, required: true },
-        users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-        gigs: [{ type: Schema.Types.ObjectId, ref: 'Gig' }],
+        users: [{ type: Schema.Types.ObjectId, ref: USER }],
+        gigs: [{ type: Schema.Types.ObjectId, ref: GIG }],
     },
     { timestamps: true },
 );
@@ -30,8 +31,8 @@ SkillSchema.pre(
         const self = this as any; // Store the current context
 
         // Now, self refers to the Mongoose document
-        self.model('Gig').updateMany({ $pull: { skills: self._id } }, next);
+        self.model(GIG).updateMany({ $pull: { skills: self._id } }, next);
         self.model('Users').updateMany({ $pull: { skills: self._id } }, next);
     },
 );
-export default mongoose.model<ISkill>('Skill', SkillSchema);
+export default mongoose.model<ISkill>(SKILL, SkillSchema);

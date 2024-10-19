@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { IMAGE } from '../utils/constants';
 
 export interface IImage extends Document {
     size: number;
@@ -18,4 +19,4 @@ const ImageSchema: Schema = new Schema<IImage>(
     { timestamps: true },
 );
 
-export default mongoose.model<IImage>('Image', ImageSchema);
+export default mongoose.model<IImage>(IMAGE, ImageSchema);
